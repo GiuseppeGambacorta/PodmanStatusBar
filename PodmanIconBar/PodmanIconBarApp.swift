@@ -6,10 +6,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Crea l'icona nella menu bar
-        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         
         if let button = statusItem?.button {
-            button.title = "⏺"
             button.action = #selector(statusItemClicked)
             button.target = self
         }
@@ -74,7 +73,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func updateStatus(isRunning: Bool) {
         if let button = statusItem?.button {
-            button.title = isRunning ? "🟢" : "🔴"
+            let imageName = isRunning ? "podman-on" : "podman-off"
+            
+            if let image = NSImage(named: imageName) {
+                // Ridimensiona l'immagine per la menu bar (circa 18x18 punti)
+                image.size = NSSize(width: 42, height: 20)
+                image.isTemplate = false // Cambia a true se vuoi che l'immagine si adatti al tema (chiaro/scuro)
+                button.image = image
+            }
+            
             button.toolTip = isRunning ? "Podman VM: in esecuzione" : "Podman VM: non attiva"
         }
     }

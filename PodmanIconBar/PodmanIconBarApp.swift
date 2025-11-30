@@ -3,8 +3,13 @@ import Cocoa
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem?
     var timer: Timer?
+    var isVMRunning: Bool = false
+    var podmanPath: String = "/opt/homebrew/bin/podman"
     
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // Trova il percorso di podman
+        findPodmanPath()
+        
         // Crea l'icona nella menu bar
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         
@@ -27,6 +32,29 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         menu.addItem(NSMenuItem(title: "Controlla stato", action: #selector(checkPodmanStatusManually), keyEquivalent: "r"))
         menu.addItem(NSMenuItem.separator())
+        
+        // Mostra i container solo se la VM è in esecuzione
+        if isVMRunning {
+            let containers = getRunningContainers()
+            if containers.isEmpty {
+                let item = NSMenuItem(title: "Nessun container in esecuzione", action: nil, keyEquivalent: "")
+                item.isEnabled = false
+                menu.addItem(item)
+            } else {
+                let containersTitle = NSMenuItem(title: "Container in esecuzione:", action: nil, keyEquivalent: "")
+                containersTitle.isEnabled = false
+                menu.addItem(containersTitle)
+                
+                for container in containers {
+                    let item = NSMenuItem(title: "  \(container)", action: nil, keyEquivalent: "")
+                    item.isEnabled = false
+                    menu.addItem(item)
+                }
+            }
+            
+            menu.addItem(NSMenuItem.separator())
+        }
+        
         menu.addItem(NSMenuItem(title: "Avvia VM", action: #selector(startVM), keyEquivalent: "s"))
         menu.addItem(NSMenuItem(title: "Ferma VM", action: #selector(stopVM), keyEquivalent: "x"))
         menu.addItem(NSMenuItem.separator())
@@ -39,7 +67,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func checkPodmanStatus() {
         let task = Process()
-        task.launchPath = "/opt/homebrew/bin/podman"
+        task.launchPath = podmanPath
         task.arguments = ["machine", "info", "--format", "json"]
         
         let pipe = Pipe()
@@ -74,10 +102,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func updateStatus(isRunning: Bool) {
         if let button = statusItem?.button {
             let imageName = isRunning ? "podman-on" : "podman-off"
-            
+            isVMRunning = isRunning
             if let image = NSImage(named: imageName) {
                 // Ridimensiona l'immagine per la menu bar (circa 18x18 punti)
-                image.size = NSSize(width: 42, height: 20)
+                image.size = NSSize(width: 44, height: 22)
                 image.isTemplate = false // Cambia a true se vuoi che l'immagine si adatti al tema (chiaro/scuro)
                 button.image = image
             }
@@ -108,7 +136,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func executeCommand(args: [String]) {
         let task = Process()
-        task.launchPath = "/opt/homebrew/bin/podman"
+        task.launchPath = podmanPath
         task.arguments = args
         
         do {
@@ -116,6 +144,58 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         } catch {
             print("Errore nell'esecuzione del comando: \(error)")
         }
+    }
+    
+    func findPodmanPath() {
+        let task = Process()
+        task.launchPath = "/usr/bin/which"
+        task.arguments = ["podman"]
+        
+        let pipe = Pipe()
+        task.standardOutput = pipe
+        
+        do {
+            try task.run()
+            task.waitUntilExit()
+            
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            if let output = String(data: data, encoding: .utf8) {
+                let path = output.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !path.isEmpty {
+                    podmanPath = path
+                }
+            }
+        } catch {
+            print("Errore nel trovare il percorso di podman: \(error)")
+        }
+    }
+    
+    func getRunningContainers() -> [String] {
+        let task = Process()
+        task.launchPath = podmanPath
+        task.arguments = ["ps", "--format", "{{.Names}}"]
+        
+        let pipe = Pipe()
+        task.standardOutput = pipe
+        task.standardError = pipe
+        
+        var containerNames: [String] = []
+        
+        do {
+            try task.run()
+            task.waitUntilExit()
+            
+            let data = pipe.fileHandleForReading.readDataToEndOfFile()
+            if let output = String(data: data, encoding: .utf8) {
+                containerNames = output.components(separatedBy: "\n")
+                    .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                    .filter { !$0.isEmpty }
+            }
+        } catch {
+            print("Errore nel recupero dei container: \(error)")
+        }
+        
+        return containerNames
     }
     
     @objc func quit() {

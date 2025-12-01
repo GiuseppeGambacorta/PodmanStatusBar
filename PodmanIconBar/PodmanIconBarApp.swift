@@ -8,10 +8,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var podmanPath: String = "/opt/homebrew/bin/podman"
     
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // Trova il percorso di podman
+
         findPodmanPath()
         
-        // Crea l'icona nella menu bar
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         
         if let button = statusItem?.button {
@@ -19,10 +18,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             button.target = self
         }
         
-        // Controlla lo stato immediatamente
+
         checkPodmanStatus()
         
-        // Controlla ogni 5 secondi
+
         timerCheckStatus = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
             self.checkPodmanStatus()
         }
@@ -34,7 +33,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(NSMenuItem(title: "Check VM State", action: #selector(checkPodmanStatusManually), keyEquivalent: "r"))
         menu.addItem(NSMenuItem.separator())
         
-        // Mostra i container solo se la VM è in esecuzione
+
         if isVMRunning {
             let containers = getRunningContainers()
             if containers.isEmpty {
@@ -143,7 +142,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem?.menu?.cancelTracking()
 
         executeCommand(args: ["machine", "start"])
-        // Aspetta un secondo e ricontrolla
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             self.checkPodmanStatus()
         }
@@ -153,7 +152,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem?.menu?.cancelTracking()
 
         executeCommand(args: ["machine", "stop"])
-        // Aspetta un secondo e ricontrolla
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             self.checkPodmanStatus()
         }

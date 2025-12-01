@@ -1,0 +1,18 @@
+# GitHub Pages Jekyll Configuration
+theme: jekyll-theme-cayman
+title: PodmanStatusBar
+description: A small macOS app that lives in the top bar to control and manage the Podman VM
+
+# URL settings
+baseurl: /PodmanStatusBar
+url: https://giuseppegambacorta.github.io
+
+# Build settings
+markdown: kramdown
+
+# Exclude unnecessary files from build
+exclude:
+  - PodmanStatusBar/
+  - PodmanStatusBar.xcodeproj/
+  - LICENSE
+  - readme.md

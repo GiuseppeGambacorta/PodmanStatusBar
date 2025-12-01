@@ -15,13 +15,13 @@ I created this app because I often forgot to shut down my Podman VM and also run
 ## Screenshots
 
 ### VM Running
-![VM Running](https://raw.githubusercontent.com/GiuseppeGambacorta/PodmanStatusBar/main/img/on.png)
+![VM Running](https://raw.githubusercontent.com/GiuseppeGambacorta/PodmanStatusBar/main/docs/img/on.png)
 
 ### VM Stopped
-![VM Stopped](https://raw.githubusercontent.com/GiuseppeGambacorta/PodmanStatusBar/main/img/off.png)
+![VM Stopped](https://raw.githubusercontent.com/GiuseppeGambacorta/PodmanStatusBar/main/docs/img/off.png)
 
 ### MENÙ
-![MENU](https://raw.githubusercontent.com/GiuseppeGambacorta/PodmanStatusBar/main/img/menu.png)
+![MENU](https://raw.githubusercontent.com/GiuseppeGambacorta/PodmanStatusBar/main/docs/img/menu.png)
 
 ## Requirements
 

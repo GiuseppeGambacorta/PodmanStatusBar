@@ -19,13 +19,13 @@ I created this app because I often forgot to shut down my Podman VM and also run
 ## Screenshots
 
 ### VM Running
-![VM Running](img/on.png)
+![VM Running](../img/on.png)
 
 ### VM Stopped
-![VM Stopped](img/off.png)
+![VM Stopped](../img/off.png)
 
 ### MENÙ
-![MENU](img/menu.png)
+![MENU](img/../menu.png)
 
 ## Requirements
 

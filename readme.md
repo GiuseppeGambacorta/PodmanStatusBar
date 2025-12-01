@@ -15,6 +15,9 @@ I created this app because I often forgot to shut down my Podman VM and also run
 ### VM Stopped
 ![VM Stopped](https://raw.githubusercontent.com/GiuseppeGambacorta/PodmanStatusBar/main/img/off.png)
 
+### MENÙ
+![MENU](https://raw.githubusercontent.com/GiuseppeGambacorta/PodmanStatusBar/main/img/menu.png)
+
 ## Requirements
 
 - macOS
